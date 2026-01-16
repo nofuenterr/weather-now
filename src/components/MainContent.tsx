@@ -37,14 +37,25 @@ export default function MainContent() {
 					</div>
 
 					<div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5 lg:gap-6">
-						<WeatherData label="Feels Like" value="18°" />
-						<WeatherData label="Humidity" value="46%" />
-						<WeatherData label="Wind" value="14 km" />
-						<WeatherData label="Precipitation" value="0 mm" />
+						<WeatherDataCard label="Feels Like" value="18°" />
+						<WeatherDataCard label="Humidity" value="46%" />
+						<WeatherDataCard label="Wind" value="14 km" />
+						<WeatherDataCard label="Precipitation" value="0 mm" />
 					</div>
 				</section>
 
-				<section></section>
+				<section className="grid gap-5">
+					<h2 className="text-xl font-semibold">Daily forecast</h2>
+					<ul className="grid grid-cols-[repeat(auto-fit,minmax(90px,1fr))] gap-4 md:grid-cols-7">
+						<DailyWeatherCard dayLabel="Tue" maxTemp="20°" minTemp="14°" />
+						<DailyWeatherCard dayLabel="Wed" maxTemp="21°" minTemp="15°" />
+						<DailyWeatherCard dayLabel="Thu" maxTemp="24°" minTemp="14°" />
+						<DailyWeatherCard dayLabel="Fri" maxTemp="25°" minTemp="13°" />
+						<DailyWeatherCard dayLabel="Sat" maxTemp="21°" minTemp="15°" />
+						<DailyWeatherCard dayLabel="Sun" maxTemp="25°" minTemp="16°" />
+						<DailyWeatherCard dayLabel="Mon" maxTemp="24°" minTemp="15°" />
+					</ul>
+				</section>
 
 				<section></section>
 			</div>
@@ -52,16 +63,41 @@ export default function MainContent() {
 	);
 }
 
-interface WeatherDataProps {
+interface WeatherDataCardProps {
 	label: string;
 	value: string;
 }
 
-function WeatherData({ label, value }: WeatherDataProps) {
+function WeatherDataCard({ label, value }: WeatherDataCardProps) {
 	return (
 		<div className="grid gap-6 rounded-xl border border-neutral-600 bg-neutral-800 p-5">
 			<h2 className="text-[1.125rem] text-neutral-200">{label}</h2>
 			<p className="text-[2rem] leading-none font-light">{value}</p>
 		</div>
+	);
+}
+
+type DayLabelTypes = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
+
+interface DailyWeatherCardProps {
+	dayLabel: DayLabelTypes;
+	maxTemp: string;
+	minTemp: string;
+}
+
+function DailyWeatherCard({
+	dayLabel,
+	maxTemp,
+	minTemp,
+}: DailyWeatherCardProps) {
+	return (
+		<li className="grid justify-center gap-4 rounded-xl bg-neutral-800 px-2.5 py-4">
+			<h3 className="text-center text-[1.125rem]">{dayLabel}</h3>
+			<div className="size-15 border border-neutral-900"></div>
+			<div className="flex items-center justify-between">
+				<span>{maxTemp}</span>
+				<span className="text-neutral-200">{minTemp}</span>
+			</div>
+		</li>
 	);
 }
