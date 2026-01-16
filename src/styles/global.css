@@ -85,5 +85,6 @@
 body {
 	position: relative;
 	min-height: 100dvh;
+	max-width: 1440px;
 	margin: 0 auto;
 }
