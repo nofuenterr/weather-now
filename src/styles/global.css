@@ -64,10 +64,11 @@
 :root {
 	font-family: var(--font-body);
 	font-size: 1rem;
-	font-weight: 400;
+	font-weight: 500;
+	line-height: 1.2;
 
-	/* background-color: var(--color-background-light);
-	color: var(--color-foreground-light); */
+	background-color: var(--color-neutral-900);
+	color: var(--color-neutral-0);
 
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
