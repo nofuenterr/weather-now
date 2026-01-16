@@ -1,4 +1,5 @@
 import Header from './components/Header';
+import MainContent from './components/MainContent';
 
 function App() {
 	return (
@@ -7,6 +8,7 @@ function App() {
 			<p className="font-header text-center text-[3.25rem] font-bold text-balance">
 				How’s the sky looking today?
 			</p>
+			<MainContent />
 		</div>
 	);
 }
