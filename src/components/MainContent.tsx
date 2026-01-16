@@ -37,24 +37,10 @@ export default function MainContent() {
 					</div>
 
 					<div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5 lg:gap-6">
-						<div className="grid gap-6 rounded-xl border border-neutral-600 bg-neutral-800 p-5">
-							<h2 className="text-[1.125rem] text-neutral-200">Feels Like</h2>
-							<p className="text-[2rem] leading-none font-light">18°</p>
-						</div>
-						<div className="grid gap-6 rounded-xl border border-neutral-600 bg-neutral-800 p-5">
-							<h2 className="text-[1.125rem] text-neutral-200">Humidity</h2>
-							<p className="text-[2rem] leading-none font-light">46%</p>
-						</div>
-						<div className="grid gap-6 rounded-xl border border-neutral-600 bg-neutral-800 p-5">
-							<h2 className="text-[1.125rem] text-neutral-200">Wind</h2>
-							<p className="text-[2rem] leading-none font-light">14 km/h</p>
-						</div>
-						<div className="grid gap-6 rounded-xl border border-neutral-600 bg-neutral-800 p-5">
-							<h2 className="text-[1.125rem] text-neutral-200">
-								Precipitation
-							</h2>
-							<p className="text-[2rem] leading-none font-light">0 mm</p>
-						</div>
+						<WeatherData label="Feels Like" value="18°" />
+						<WeatherData label="Humidity" value="46%" />
+						<WeatherData label="Wind" value="14 km" />
+						<WeatherData label="Precipitation" value="0 mm" />
 					</div>
 				</section>
 
@@ -63,5 +49,19 @@ export default function MainContent() {
 				<section></section>
 			</div>
 		</main>
+	);
+}
+
+interface WeatherDataProps {
+	label: string;
+	value: string;
+}
+
+function WeatherData({ label, value }: WeatherDataProps) {
+	return (
+		<div className="grid gap-6 rounded-xl border border-neutral-600 bg-neutral-800 p-5">
+			<h2 className="text-[1.125rem] text-neutral-200">{label}</h2>
+			<p className="text-[2rem] leading-none font-light">{value}</p>
+		</div>
 	);
 }
