@@ -1,36 +1,8 @@
 import { Select } from 'radix-ui';
-import searchIcon from '../assets/icons/icon-search.svg';
 import DropdownIcon from './icons/DropdownIcon';
-import { useQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
-import loadingIcon from '../assets/icons/icon-loading.svg';
-
-const MAPBOX_API_KEY =
-	'pk.eyJ1IjoicnJub2Z1ZW50ZSIsImEiOiJjbWtnaDEzMHMwN3VmM2tvZWFlb3c3bzZ0In0.RDIT6l4FDydq0gKIw82dTQ';
-
-async function fetchLocation(location: string) {
-	const response = await fetch(
-		`https://api.mapbox.com/geocoding/v5/mapbox.places/${location}.json?access_token=${MAPBOX_API_KEY}`
-	);
-	if (!response.ok) throw new Error('Network error');
-	return response.json();
-}
-
-interface FormattedLocation {
-	text: string;
-	placeName: string;
-	longitude: number;
-	latitude: number;
-}
-
-interface LocationData {
-	text: string;
-	place_type: string[];
-	place_name: string;
-	geometry: {
-		coordinates: [number, number];
-	};
-}
+import { useState } from 'react';
+import SearchLocation from './SearchLocation';
+import type { FormattedLocation } from '../types/location';
 
 export default function MainContent() {
 	const [query, setQuery] = useState<FormattedLocation | null>(null);
@@ -38,7 +10,7 @@ export default function MainContent() {
 	return (
 		<main className="grid gap-8">
 			<div className="grid auto-rows-[3.5rem] gap-3 md:grid-cols-[1fr_7.125rem] md:gap-4 lg:grid-cols-[minmax(0,32.875rem)_7.125rem] lg:justify-self-center">
-				<SearchBar query={query} setQuery={setQuery} />
+				<SearchLocation query={query} setQuery={setQuery} />
 
 				<button className="cursor-pointer rounded-xl bg-blue-500 px-6 py-4">
 					Search
@@ -102,119 +74,6 @@ export default function MainContent() {
 				</section>
 			</div>
 		</main>
-	);
-}
-
-interface SearchBarProps {
-	query: FormattedLocation | null;
-	setQuery: React.Dispatch<React.SetStateAction<FormattedLocation | null>>;
-}
-
-function SearchBar({ query, setQuery }: SearchBarProps) {
-	const [locationValue, setLocationValue] = useState<string>('');
-
-	const { data, isLoading, error } = useQuery({
-		queryKey: ['location', locationValue],
-		queryFn: ({ queryKey }) => {
-			const [, locationValue] = queryKey;
-			return fetchLocation(locationValue);
-		},
-		enabled: Boolean(locationValue),
-	});
-
-	const useLocationFormatter = (data: LocationData[] | undefined) => {
-		const formatLocationData = useCallback(():
-			| FormattedLocation[]
-			| undefined => {
-			if (!data) return undefined;
-
-			return data.map((location: LocationData): FormattedLocation => {
-				return {
-					text: location.text,
-					placeName: !location.place_type.includes('country')
-						? location.place_name
-						: '',
-					longitude: +location.geometry.coordinates[0].toFixed(2),
-					latitude: +location.geometry.coordinates[1].toFixed(2),
-				};
-			});
-		}, [data]);
-
-		return formatLocationData;
-	};
-
-	const formatLocations = useLocationFormatter(data?.features);
-	const locations = formatLocations();
-
-	return (
-		<div className="relative w-full">
-			<div className="pointer-events-none absolute top-4 left-6">
-				<img src={searchIcon} alt="Search icon" />
-			</div>
-			<input
-				className="w-full rounded-xl bg-neutral-800 py-4 pr-6 pl-15"
-				type="search"
-				placeholder="Search for a place..."
-				value={locationValue}
-				onChange={(e) => setLocationValue(e.target.value)}
-			/>
-
-			{locationValue ? (
-				<div className="relative -bottom-3.5 rounded-xl bg-neutral-800 p-2">
-					{isLoading ? (
-						<div className="flex items-center gap-2.5 rounded-lg px-2 py-2.5">
-							<div>
-								<img
-									className="animate-spin"
-									src={loadingIcon}
-									alt="Loading icon"
-								/>
-							</div>
-							<p>Search in progress</p>
-						</div>
-					) : error ? (
-						<div className="rounded-lg px-2 py-2.5">
-							<p>An error has occured! {error.message}</p>
-						</div>
-					) : locations && locations.length > 0 ? (
-						<ul className="grid gap-1">
-							{locations.map((location: FormattedLocation, index: number) => {
-								return (
-									<li key={`${index}-${location.text}`}>
-										<button
-											className="grid w-full cursor-pointer gap-1 rounded-lg border border-transparent px-2 py-2.5 text-start hover:border-neutral-600 hover:bg-neutral-700"
-											onClick={() => setQuery(location)}
-											style={{
-												backgroundColor:
-													query?.latitude === location.latitude &&
-													query.longitude === location.longitude
-														? 'var(--color-neutral-700)'
-														: '',
-												borderColor:
-													query?.latitude === location.latitude &&
-													query.longitude === location.longitude
-														? 'var(--color-neutral-600)'
-														: '',
-											}}
-										>
-											<p>{location.text}</p>
-											<p>
-												{location.placeName ? location.placeName : ''}{' '}
-												{`(${location.latitude}°N ${location.longitude}°E)`}
-											</p>
-										</button>
-									</li>
-								);
-							})}
-						</ul>
-					) : (
-						<div className="rounded-lg px-2 py-2.5">
-							<p>No location found!</p>
-						</div>
-					)}
-				</div>
-			) : null}
-		</div>
 	);
 }
 
