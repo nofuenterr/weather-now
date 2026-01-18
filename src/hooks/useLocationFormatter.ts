@@ -10,9 +10,7 @@ export const useLocationFormatter = (data: LocationData[] | undefined) => {
 		return data.map((location: LocationData): FormattedLocation => {
 			return {
 				text: location.text,
-				placeName: !location.place_type.includes('country')
-					? location.place_name
-					: '',
+				placeName: location.place_name,
 				longitude: +location.geometry.coordinates[0].toFixed(2),
 				latitude: +location.geometry.coordinates[1].toFixed(2),
 			};
