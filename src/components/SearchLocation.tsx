@@ -46,7 +46,7 @@ export default function SearchLocation({
 				<img src={searchIcon} alt="Search icon" />
 			</div>
 			<input
-				className="w-full rounded-xl bg-neutral-800 py-4 pr-6 pl-15"
+				className="w-full rounded-xl bg-neutral-800 py-4 pr-6 pl-15 hover:bg-neutral-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-neutral-200"
 				type="search"
 				placeholder="Search for a place..."
 				value={locationValue}
@@ -114,7 +114,7 @@ function Locations({
 				return (
 					<li key={`${index}-${location.text}`}>
 						<button
-							className="grid w-full cursor-pointer gap-1 rounded-lg border border-transparent px-2 py-2.5 text-start hover:border-neutral-600 hover:bg-neutral-700"
+							className="focus-visible:outline-neutral-0 grid w-full cursor-pointer gap-1 rounded-lg border border-transparent px-2 py-2.5 text-start hover:border-neutral-600 hover:bg-neutral-700 focus-visible:outline-2 focus-visible:outline-offset-2"
 							onClick={() => {
 								setQuery(location);
 								setLocationsDisplay(false);

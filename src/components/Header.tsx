@@ -22,7 +22,7 @@ function SelectUnits() {
 	return (
 		<Select.Root>
 			<Select.Trigger
-				className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md bg-neutral-800 px-2.5 py-2 text-sm md:gap-2.5 md:rounded-lg md:px-4 md:py-3 md:text-base"
+				className="focus-visible:outline-neutral-0 inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md bg-neutral-800 px-2.5 py-2 text-sm hover:bg-neutral-700 focus-visible:outline-3 focus-visible:outline-offset-3 md:gap-2.5 md:rounded-lg md:px-4 md:py-3 md:text-base"
 				aria-label="Select units"
 			>
 				<Select.Icon>
@@ -44,13 +44,13 @@ function SelectUnits() {
 						<Select.Group className="grid gap-2">
 							<Select.Item
 								value="imperial"
-								className="cursor-pointer px-2 py-2.5"
+								className="focus-visible:outline-neutral-0 cursor-pointer rounded-lg px-2 py-2.5 hover:bg-neutral-700 focus-visible:outline-2 focus-visible:outline-offset-2"
 							>
 								<Select.ItemText>Switch to Imperial</Select.ItemText>
 							</Select.Item>
 							<Select.Item
 								value="metric"
-								className="hidden cursor-pointer px-2 py-2.5"
+								className="hidden cursor-pointer px-2 py-2.5 hover:bg-neutral-700"
 							>
 								<Select.ItemText>Switch to Metric</Select.ItemText>
 							</Select.Item>
@@ -105,7 +105,7 @@ function SelectItem({ value, text }: SelectItemProps) {
 	return (
 		<Select.Item
 			value={value}
-			className="cursor-pointer rounded-lg px-2 py-2.5"
+			className="focus-visible:outline-neutral-0 cursor-pointer rounded-lg px-2 py-2.5 hover:bg-neutral-700 focus-visible:outline-2 focus-visible:outline-offset-2"
 		>
 			<Select.ItemText>{text}</Select.ItemText>
 			<Select.ItemIndicator />

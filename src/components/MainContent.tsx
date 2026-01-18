@@ -40,7 +40,7 @@ export default function MainContent() {
 					<div className="grid auto-rows-[3.5rem] gap-3 md:grid-cols-[1fr_7.125rem] md:gap-4 lg:grid-cols-[minmax(0,32.875rem)_7.125rem] lg:justify-self-center">
 						<SearchLocation query={query} setQuery={setQuery} />
 
-						<button className="cursor-pointer rounded-xl bg-blue-500 px-6 py-4">
+						<button className="cursor-pointer rounded-xl bg-blue-500 px-6 py-4 hover:bg-blue-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-blue-500">
 							Search
 						</button>
 					</div>
@@ -318,7 +318,7 @@ function SelectDay() {
 	return (
 		<Select.Root>
 			<Select.Trigger
-				className="inline-flex cursor-pointer items-center justify-center gap-3 rounded-lg bg-neutral-600 px-4 py-2"
+				className="focus-visible:outline-neutral-0 inline-flex cursor-pointer items-center justify-center gap-3 rounded-lg bg-neutral-600 px-4 py-2 hover:bg-neutral-500 focus-visible:outline-3 focus-visible:outline-offset-3"
 				aria-label="Select day"
 			>
 				<Select.Value placeholder="Select Day" />
@@ -357,7 +357,7 @@ function SelectItem({ value, text }: SelectItemProps) {
 	return (
 		<Select.Item
 			value={value}
-			className="cursor-pointer rounded-lg px-2 py-2.5"
+			className="focus-visible:outline-neutral-0 cursor-pointer rounded-lg px-2 py-2.5 hover:bg-neutral-700 focus-visible:outline-2 focus-visible:outline-offset-2"
 		>
 			<Select.ItemText>{text}</Select.ItemText>
 			<Select.ItemIndicator />
