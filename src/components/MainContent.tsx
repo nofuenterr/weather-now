@@ -7,11 +7,12 @@ import type { FormattedLocation } from '../types/location';
 import type { WeatherData } from '../types/weatherData';
 import { format } from 'date-fns';
 import WeatherDataLoading from './WeatherDataLoading';
+import getWeatherIcon, { type WeatherCodeTypes } from '../utils/getWeatherIcon';
 
 async function fetchWeatherData(location: string | FormattedLocation | null) {
 	if (!location || typeof location === 'string') return null;
 	const response = await fetch(
-		`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}4&longitude=${location.longitude}&daily=temperature_2m_min,temperature_2m_max&hourly=temperature_2m&current=apparent_temperature,temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation&timezone=auto`
+		`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}4&longitude=${location.longitude}&daily=temperature_2m_min,temperature_2m_max,weather_code&hourly=temperature_2m,weather_code&current=apparent_temperature,temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,precipitation&timezone=auto`
 	);
 	if (!response.ok) throw new Error('Network error');
 	return response.json();
@@ -138,7 +139,12 @@ function ContentContainer({ weatherData, query }: ContentContainerProps) {
 					</div>
 
 					<div className="flex flex-wrap items-center justify-center gap-5 justify-self-center md:justify-end md:justify-self-end">
-						<div className="size-30 rounded-full border border-neutral-900"></div>
+						<div className="size-30 rounded-full">
+							<img
+								src={getWeatherIcon(weatherData.current.weather_code)}
+								alt="Weather icon"
+							/>
+						</div>
 
 						<p className="text-8xl leading-none font-semibold tracking-[-2%] italic [@media(max-width:25rem)]:text-7xl">
 							{`${weatherData.current.temperature_2m}${weatherData.current_units.temperature_2m}`}
@@ -173,36 +179,43 @@ function ContentContainer({ weatherData, query }: ContentContainerProps) {
 						dayLabel={formatDayOfWeek(weatherData.daily.time[0])}
 						maxTemp={`${weatherData.daily.temperature_2m_max[0].toFixed(0)}°`}
 						minTemp={`${weatherData.daily.temperature_2m_min[0].toFixed(0)}°`}
+						weatherCode={weatherData.daily.weather_code[0]}
 					/>
 					<DailyWeatherCard
 						dayLabel={formatDayOfWeek(weatherData.daily.time[1])}
 						maxTemp={`${weatherData.daily.temperature_2m_max[1].toFixed(0)}°`}
 						minTemp={`${weatherData.daily.temperature_2m_min[1].toFixed(0)}°`}
+						weatherCode={weatherData.daily.weather_code[1]}
 					/>
 					<DailyWeatherCard
 						dayLabel={formatDayOfWeek(weatherData.daily.time[2])}
 						maxTemp={`${weatherData.daily.temperature_2m_max[2].toFixed(0)}°`}
 						minTemp={`${weatherData.daily.temperature_2m_min[2].toFixed(0)}°`}
+						weatherCode={weatherData.daily.weather_code[2]}
 					/>
 					<DailyWeatherCard
 						dayLabel={formatDayOfWeek(weatherData.daily.time[3])}
 						maxTemp={`${weatherData.daily.temperature_2m_max[3].toFixed(0)}°`}
 						minTemp={`${weatherData.daily.temperature_2m_min[3].toFixed(0)}°`}
+						weatherCode={weatherData.daily.weather_code[3]}
 					/>
 					<DailyWeatherCard
 						dayLabel={formatDayOfWeek(weatherData.daily.time[4])}
 						maxTemp={`${weatherData.daily.temperature_2m_max[4].toFixed(0)}°`}
 						minTemp={`${weatherData.daily.temperature_2m_min[4].toFixed(0)}°`}
+						weatherCode={weatherData.daily.weather_code[4]}
 					/>
 					<DailyWeatherCard
 						dayLabel={formatDayOfWeek(weatherData.daily.time[5])}
 						maxTemp={`${weatherData.daily.temperature_2m_max[5].toFixed(0)}°`}
 						minTemp={`${weatherData.daily.temperature_2m_min[5].toFixed(0)}°`}
+						weatherCode={weatherData.daily.weather_code[5]}
 					/>
 					<DailyWeatherCard
 						dayLabel={formatDayOfWeek(weatherData.daily.time[6])}
 						maxTemp={`${weatherData.daily.temperature_2m_max[6].toFixed(0)}°`}
 						minTemp={`${weatherData.daily.temperature_2m_min[6].toFixed(0)}°`}
+						weatherCode={weatherData.daily.weather_code[6]}
 					/>
 				</ul>
 			</section>
@@ -219,48 +232,56 @@ function ContentContainer({ weatherData, query }: ContentContainerProps) {
 							weatherData.hourly.time[getCurrentHour()]
 						)}
 						minTemp={`${weatherData.hourly.temperature_2m[0].toFixed(0)}°`}
+						weatherCode={weatherData.hourly.weather_code[0]}
 					/>
 					<HourlyWeatherCard
 						timeLabel={formatHourOfDay(
 							weatherData.hourly.time[getCurrentHour() + 1]
 						)}
 						minTemp={`${weatherData.hourly.temperature_2m[1].toFixed(0)}°`}
+						weatherCode={weatherData.hourly.weather_code[1]}
 					/>
 					<HourlyWeatherCard
 						timeLabel={formatHourOfDay(
 							weatherData.hourly.time[getCurrentHour() + 2]
 						)}
 						minTemp={`${weatherData.hourly.temperature_2m[2].toFixed(0)}°`}
+						weatherCode={weatherData.hourly.weather_code[2]}
 					/>
 					<HourlyWeatherCard
 						timeLabel={formatHourOfDay(
 							weatherData.hourly.time[getCurrentHour() + 3]
 						)}
 						minTemp={`${weatherData.hourly.temperature_2m[3].toFixed(0)}°`}
+						weatherCode={weatherData.hourly.weather_code[3]}
 					/>
 					<HourlyWeatherCard
 						timeLabel={formatHourOfDay(
 							weatherData.hourly.time[getCurrentHour() + 4]
 						)}
 						minTemp={`${weatherData.hourly.temperature_2m[4].toFixed(0)}°`}
+						weatherCode={weatherData.hourly.weather_code[4]}
 					/>
 					<HourlyWeatherCard
 						timeLabel={formatHourOfDay(
 							weatherData.hourly.time[getCurrentHour() + 5]
 						)}
 						minTemp={`${weatherData.hourly.temperature_2m[5].toFixed(0)}°`}
+						weatherCode={weatherData.hourly.weather_code[5]}
 					/>
 					<HourlyWeatherCard
 						timeLabel={formatHourOfDay(
 							weatherData.hourly.time[getCurrentHour() + 6]
 						)}
 						minTemp={`${weatherData.hourly.temperature_2m[6].toFixed(0)}°`}
+						weatherCode={weatherData.hourly.weather_code[6]}
 					/>
 					<HourlyWeatherCard
 						timeLabel={formatHourOfDay(
 							weatherData.hourly.time[getCurrentHour() + 7]
 						)}
 						minTemp={`${weatherData.hourly.temperature_2m[7].toFixed(0)}°`}
+						weatherCode={weatherData.hourly.weather_code[7]}
 					/>
 				</ul>
 			</section>
@@ -295,17 +316,21 @@ interface DailyWeatherCardProps {
 	dayLabel: DayLabelTypes;
 	maxTemp: string;
 	minTemp: string;
+	weatherCode: WeatherCodeTypes;
 }
 
 function DailyWeatherCard({
 	dayLabel,
 	maxTemp,
 	minTemp,
+	weatherCode,
 }: DailyWeatherCardProps) {
 	return (
 		<li className="grid justify-center gap-4 rounded-xl bg-neutral-800 px-2.5 py-4">
 			<h3 className="text-center text-[1.125rem]">{dayLabel}</h3>
-			<div className="size-15 border border-neutral-900"></div>
+			<div className="size-15">
+				<img src={getWeatherIcon(weatherCode)} alt="Weather icon" />
+			</div>
 			<div className="flex items-center justify-between">
 				<span>{maxTemp}</span>
 				<span className="text-neutral-200">{minTemp}</span>
@@ -368,13 +393,20 @@ function SelectItem({ value, text }: SelectItemProps) {
 interface HourlyWeatherCardProps {
 	timeLabel: string;
 	minTemp: string;
+	weatherCode: WeatherCodeTypes;
 }
 
-function HourlyWeatherCard({ timeLabel, minTemp }: HourlyWeatherCardProps) {
+function HourlyWeatherCard({
+	timeLabel,
+	minTemp,
+	weatherCode,
+}: HourlyWeatherCardProps) {
 	return (
 		<li className="flex items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-3 py-2.5">
 			<div className="flex items-center gap-2">
-				<div className="size-10 border border-neutral-900"></div>
+				<div className="size-10">
+					<img src={getWeatherIcon(weatherCode)} alt="Weather icon" />
+				</div>
 				<h3 className="text-xl">{timeLabel}</h3>
 			</div>
 
