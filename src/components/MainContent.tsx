@@ -8,6 +8,12 @@ import type { WeatherData } from '../types/weatherData';
 import { format } from 'date-fns';
 import WeatherDataLoading from './WeatherDataLoading';
 import getWeatherIcon, { type WeatherCodeTypes } from '../utils/getWeatherIcon';
+import { useUnitsStore } from '../stores/units';
+import {
+	getPrecipitation,
+	getTemperature,
+	getWindSpeed,
+} from '../utils/getValuesFromUnits';
 
 async function fetchWeatherData(location: string | FormattedLocation | null) {
 	if (!location || typeof location === 'string') return null;
@@ -135,6 +141,9 @@ const currentDayOfTheWeek: FullDayLabelTypes = format(
 function ContentContainer({ weatherData, query }: ContentContainerProps) {
 	const [selectedDay, setSelectedDay] =
 		useState<FullDayLabelTypes>(currentDayOfTheWeek);
+	const temperatureUnit = useUnitsStore((s) => s.temperatureUnit);
+	const windSpeedUnit = useUnitsStore((s) => s.windSpeedUnit);
+	const precipitationUnit = useUnitsStore((s) => s.precipitationUnit);
 
 	function getHourOffsetFromToday() {
 		const hourStartIndex =
@@ -201,7 +210,11 @@ function ContentContainer({ weatherData, query }: ContentContainerProps) {
 						</div>
 
 						<p className="text-8xl leading-none font-semibold tracking-[-2%] italic [@media(max-width:25rem)]:text-7xl">
-							{`${weatherData.current.temperature_2m}${weatherData.current_units.temperature_2m}`}
+							{getTemperature(
+								weatherData.current.temperature_2m,
+								temperatureUnit,
+								1
+							)}
 						</p>
 					</div>
 				</div>
@@ -209,7 +222,11 @@ function ContentContainer({ weatherData, query }: ContentContainerProps) {
 				<div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5 lg:gap-6">
 					<WeatherDataCard
 						label="Feels Like"
-						value={`${weatherData.current.apparent_temperature}${weatherData.current_units.apparent_temperature}`}
+						value={getTemperature(
+							weatherData.current.apparent_temperature,
+							temperatureUnit,
+							1
+						)}
 					/>
 					<WeatherDataCard
 						label="Humidity"
@@ -217,11 +234,19 @@ function ContentContainer({ weatherData, query }: ContentContainerProps) {
 					/>
 					<WeatherDataCard
 						label="Wind"
-						value={`${weatherData.current.wind_speed_10m} ${weatherData.current_units.wind_speed_10m}`}
+						value={getWindSpeed(
+							weatherData.current.wind_speed_10m,
+							windSpeedUnit,
+							1
+						)}
 					/>
 					<WeatherDataCard
 						label="Precipitation"
-						value={`${weatherData.current.precipitation} ${weatherData.current_units.precipitation}`}
+						value={getPrecipitation(
+							weatherData.current.precipitation,
+							precipitationUnit,
+							2
+						)}
 					/>
 				</div>
 			</section>
@@ -234,8 +259,16 @@ function ContentContainer({ weatherData, query }: ContentContainerProps) {
 							<DailyWeatherCard
 								key={formatDayOfWeek(weatherData.daily.time[index])}
 								dayLabel={formatDayOfWeek(weatherData.daily.time[index])}
-								maxTemp={`${weatherData.daily.temperature_2m_max[index].toFixed(0)}°`}
-								minTemp={`${weatherData.daily.temperature_2m_min[index].toFixed(0)}°`}
+								maxTemp={getTemperature(
+									weatherData.daily.temperature_2m_max[index],
+									temperatureUnit,
+									0
+								)}
+								minTemp={getTemperature(
+									weatherData.daily.temperature_2m_min[index],
+									temperatureUnit,
+									0
+								)}
 								weatherCode={weatherData.daily.weather_code[index]}
 							/>
 						);
@@ -263,7 +296,13 @@ function ContentContainer({ weatherData, query }: ContentContainerProps) {
 									timeLabel={formatHourOfDay(
 										weatherData.hourly.time[hourOffsetFromToday + index]
 									)}
-									minTemp={`${weatherData.hourly.temperature_2m[hourOffsetFromToday + index].toFixed(0)}°`}
+									temp={getTemperature(
+										weatherData.hourly.temperature_2m[
+											hourOffsetFromToday + index
+										],
+										temperatureUnit,
+										0
+									)}
 									weatherCode={
 										weatherData.hourly.weather_code[hourOffsetFromToday + index]
 									}
@@ -389,13 +428,13 @@ function SelectItem({ value, text }: SelectItemProps) {
 
 interface HourlyWeatherCardProps {
 	timeLabel: string;
-	minTemp: string;
+	temp: string;
 	weatherCode: WeatherCodeTypes;
 }
 
 function HourlyWeatherCard({
 	timeLabel,
-	minTemp,
+	temp,
 	weatherCode,
 }: HourlyWeatherCardProps) {
 	return (
@@ -407,7 +446,7 @@ function HourlyWeatherCard({
 				<h3 className="text-xl">{timeLabel}</h3>
 			</div>
 
-			<p className="">{minTemp}</p>
+			<p className="">{temp}</p>
 		</li>
 	);
 }
