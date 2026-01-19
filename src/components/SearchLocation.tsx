@@ -1,12 +1,10 @@
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 import loadingIcon from '../assets/icons/icon-loading.svg';
 import searchIcon from '../assets/icons/icon-search.svg';
 import { useLocationFormatter } from '../hooks/useLocationFormatter';
 import type { FormattedLocation } from '../types/location';
-
-const MAPBOX_API_KEY =
-	'pk.eyJ1IjoicnJub2Z1ZW50ZSIsImEiOiJjbWtnaDEzMHMwN3VmM2tvZWFlb3c3bzZ0In0.RDIT6l4FDydq0gKIw82dTQ';
+import { MAPBOX_API_KEY } from '../keys/mapboxAPI';
 
 async function fetchLocation(location: string) {
 	const response = await fetch(
@@ -18,7 +16,7 @@ async function fetchLocation(location: string) {
 
 interface SearchLocationProps {
 	query: FormattedLocation | null;
-	setQuery: React.Dispatch<React.SetStateAction<FormattedLocation | null>>;
+	setQuery: Dispatch<SetStateAction<FormattedLocation | null>>;
 }
 
 export default function SearchLocation({
@@ -99,7 +97,7 @@ function ErrorDisplay({ error }: { error: Error }) {
 
 interface LocationsProps extends SearchLocationProps {
 	locations: FormattedLocation[];
-	setLocationsDisplay: React.Dispatch<React.SetStateAction<boolean>>;
+	setLocationsDisplay: Dispatch<SetStateAction<boolean>>;
 }
 
 function Locations({
