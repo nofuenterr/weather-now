@@ -85,8 +85,10 @@ interface WeatherDataCardProps {
 function WeatherDataCard({ label, value }: WeatherDataCardProps) {
 	return (
 		<div className="grid gap-6 rounded-xl border border-neutral-600 bg-neutral-800 p-5">
-			<h2 className="text-[1.125rem] text-neutral-200">{label}</h2>
-			<p className="text-3xl leading-none font-light">{value}</p>
+			<h2 className="truncate text-[1.125rem] text-neutral-200">{label}</h2>
+			<p className="text-2xl leading-none font-light [@media(max-width:25rem)]:text-xl">
+				{value}
+			</p>
 		</div>
 	);
 }

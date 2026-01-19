@@ -6,9 +6,9 @@ export default function WeatherDataLoading() {
 			<section className="grid gap-5">
 				<div className="grid h-71.5 place-content-center gap-3.5 rounded-[20px] bg-neutral-800">
 					<div className="aria-hidden flex items-center justify-center gap-2.5">
-						<div className="bg-neutral-0 size-3 rounded-full"></div>
-						<div className="bg-neutral-0 size-3 rounded-full"></div>
-						<div className="bg-neutral-0 size-3 rounded-full"></div>
+						<div className="dot bg-neutral-0 size-3 rounded-full"></div>
+						<div className="dot bg-neutral-0 size-3 rounded-full"></div>
+						<div className="dot bg-neutral-0 size-3 rounded-full"></div>
 					</div>
 					<p className="text-[1.125rem] text-neutral-200">Loading...</p>
 				</div>

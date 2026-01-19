@@ -31,7 +31,7 @@ export default function HourlyForecast({
 
 	return (
 		<section className="grid content-start gap-4 rounded-[20px] bg-neutral-800 px-4 py-5 md:p-6 xl:col-start-2 xl:row-start-1 xl:row-end-3">
-			<div className="flex items-center justify-between">
+			<div className="flex items-center justify-between gap-4">
 				<h2 className="text-xl font-semibold">Hourly forecast</h2>
 				<SelectDay
 					currentDayOfTheWeek={currentDayOfTheWeek}
