@@ -29,7 +29,6 @@ export type WeatherCodeTypes =
 	| 99;
 
 export default function getWeatherIcon(weatherCode: WeatherCodeTypes): string {
-	console.log(weatherCode);
 	switch (weatherCode) {
 		case 0:
 		case 1:

@@ -108,9 +108,63 @@ interface ContentContainerProps {
 	query: FormattedLocation;
 }
 
+type FullDayLabelTypes =
+	| 'Monday'
+	| 'Tuesday'
+	| 'Wednesday'
+	| 'Thursday'
+	| 'Friday'
+	| 'Saturday'
+	| 'Sunday';
+const fullDayLabelList: FullDayLabelTypes[] = [
+	'Monday',
+	'Tuesday',
+	'Wednesday',
+	'Thursday',
+	'Friday',
+	'Saturday',
+	'Sunday',
+];
+
 const today: number = Date.now();
+const currentDayOfTheWeek: FullDayLabelTypes = format(
+	new Date(today),
+	'EEEE'
+) as FullDayLabelTypes;
 
 function ContentContainer({ weatherData, query }: ContentContainerProps) {
+	const [selectedDay, setSelectedDay] =
+		useState<FullDayLabelTypes>(currentDayOfTheWeek);
+
+	function getHourOffsetFromToday() {
+		const hourStartIndex =
+			selectedDay === currentDayOfTheWeek ? getCurrentHour() : 0;
+
+		function getNumberOfDaysFromNow() {
+			let counter = 0;
+			let currentIndex = fullDayLabelList.indexOf(currentDayOfTheWeek);
+			while (selectedDay !== fullDayLabelList[currentIndex]) {
+				counter += 1;
+				currentIndex += 1;
+				if (currentIndex > fullDayLabelList.length) currentIndex = 0;
+			}
+			return counter;
+		}
+
+		const dayStartMultiplier = getNumberOfDaysFromNow();
+
+		return hourStartIndex + 24 * dayStartMultiplier;
+	}
+
+	const hourOffsetFromToday = getHourOffsetFromToday();
+
+	const numberOfHours =
+		selectedDay === currentDayOfTheWeek
+			? 23 - getCurrentHour() >= 8
+				? 8
+				: 23 - getCurrentHour() + 1
+			: 8;
+
 	function formatDate(date: number): string {
 		return format(new Date(date), 'EEEE, LLL d, u');
 	}
@@ -175,114 +229,48 @@ function ContentContainer({ weatherData, query }: ContentContainerProps) {
 			<section className="grid gap-5">
 				<h2 className="text-xl font-semibold">Daily forecast</h2>
 				<ul className="grid grid-cols-[repeat(auto-fit,minmax(76px,1fr))] gap-4">
-					<DailyWeatherCard
-						dayLabel={formatDayOfWeek(weatherData.daily.time[0])}
-						maxTemp={`${weatherData.daily.temperature_2m_max[0].toFixed(0)}°`}
-						minTemp={`${weatherData.daily.temperature_2m_min[0].toFixed(0)}°`}
-						weatherCode={weatherData.daily.weather_code[0]}
-					/>
-					<DailyWeatherCard
-						dayLabel={formatDayOfWeek(weatherData.daily.time[1])}
-						maxTemp={`${weatherData.daily.temperature_2m_max[1].toFixed(0)}°`}
-						minTemp={`${weatherData.daily.temperature_2m_min[1].toFixed(0)}°`}
-						weatherCode={weatherData.daily.weather_code[1]}
-					/>
-					<DailyWeatherCard
-						dayLabel={formatDayOfWeek(weatherData.daily.time[2])}
-						maxTemp={`${weatherData.daily.temperature_2m_max[2].toFixed(0)}°`}
-						minTemp={`${weatherData.daily.temperature_2m_min[2].toFixed(0)}°`}
-						weatherCode={weatherData.daily.weather_code[2]}
-					/>
-					<DailyWeatherCard
-						dayLabel={formatDayOfWeek(weatherData.daily.time[3])}
-						maxTemp={`${weatherData.daily.temperature_2m_max[3].toFixed(0)}°`}
-						minTemp={`${weatherData.daily.temperature_2m_min[3].toFixed(0)}°`}
-						weatherCode={weatherData.daily.weather_code[3]}
-					/>
-					<DailyWeatherCard
-						dayLabel={formatDayOfWeek(weatherData.daily.time[4])}
-						maxTemp={`${weatherData.daily.temperature_2m_max[4].toFixed(0)}°`}
-						minTemp={`${weatherData.daily.temperature_2m_min[4].toFixed(0)}°`}
-						weatherCode={weatherData.daily.weather_code[4]}
-					/>
-					<DailyWeatherCard
-						dayLabel={formatDayOfWeek(weatherData.daily.time[5])}
-						maxTemp={`${weatherData.daily.temperature_2m_max[5].toFixed(0)}°`}
-						minTemp={`${weatherData.daily.temperature_2m_min[5].toFixed(0)}°`}
-						weatherCode={weatherData.daily.weather_code[5]}
-					/>
-					<DailyWeatherCard
-						dayLabel={formatDayOfWeek(weatherData.daily.time[6])}
-						maxTemp={`${weatherData.daily.temperature_2m_max[6].toFixed(0)}°`}
-						minTemp={`${weatherData.daily.temperature_2m_min[6].toFixed(0)}°`}
-						weatherCode={weatherData.daily.weather_code[6]}
-					/>
+					{Array.from({ length: 7 }, (_, index) => index).map((_, index) => {
+						return (
+							<DailyWeatherCard
+								key={formatDayOfWeek(weatherData.daily.time[index])}
+								dayLabel={formatDayOfWeek(weatherData.daily.time[index])}
+								maxTemp={`${weatherData.daily.temperature_2m_max[index].toFixed(0)}°`}
+								minTemp={`${weatherData.daily.temperature_2m_min[index].toFixed(0)}°`}
+								weatherCode={weatherData.daily.weather_code[index]}
+							/>
+						);
+					})}
 				</ul>
 			</section>
 
 			<section className="grid h-min content-start gap-4 rounded-[20px] bg-neutral-800 px-4 py-5 md:p-6 xl:col-start-2 xl:row-start-1 xl:row-end-3">
 				<div className="flex items-center justify-between">
 					<h2 className="text-xl font-semibold">Hourly forecast</h2>
-					<SelectDay />
+					<SelectDay
+						currentDayOfTheWeek={currentDayOfTheWeek}
+						setSelectedDay={setSelectedDay}
+					/>
 				</div>
 
 				<ul className="grid gap-4">
-					<HourlyWeatherCard
-						timeLabel={formatHourOfDay(
-							weatherData.hourly.time[getCurrentHour()]
-						)}
-						minTemp={`${weatherData.hourly.temperature_2m[0].toFixed(0)}°`}
-						weatherCode={weatherData.hourly.weather_code[0]}
-					/>
-					<HourlyWeatherCard
-						timeLabel={formatHourOfDay(
-							weatherData.hourly.time[getCurrentHour() + 1]
-						)}
-						minTemp={`${weatherData.hourly.temperature_2m[1].toFixed(0)}°`}
-						weatherCode={weatherData.hourly.weather_code[1]}
-					/>
-					<HourlyWeatherCard
-						timeLabel={formatHourOfDay(
-							weatherData.hourly.time[getCurrentHour() + 2]
-						)}
-						minTemp={`${weatherData.hourly.temperature_2m[2].toFixed(0)}°`}
-						weatherCode={weatherData.hourly.weather_code[2]}
-					/>
-					<HourlyWeatherCard
-						timeLabel={formatHourOfDay(
-							weatherData.hourly.time[getCurrentHour() + 3]
-						)}
-						minTemp={`${weatherData.hourly.temperature_2m[3].toFixed(0)}°`}
-						weatherCode={weatherData.hourly.weather_code[3]}
-					/>
-					<HourlyWeatherCard
-						timeLabel={formatHourOfDay(
-							weatherData.hourly.time[getCurrentHour() + 4]
-						)}
-						minTemp={`${weatherData.hourly.temperature_2m[4].toFixed(0)}°`}
-						weatherCode={weatherData.hourly.weather_code[4]}
-					/>
-					<HourlyWeatherCard
-						timeLabel={formatHourOfDay(
-							weatherData.hourly.time[getCurrentHour() + 5]
-						)}
-						minTemp={`${weatherData.hourly.temperature_2m[5].toFixed(0)}°`}
-						weatherCode={weatherData.hourly.weather_code[5]}
-					/>
-					<HourlyWeatherCard
-						timeLabel={formatHourOfDay(
-							weatherData.hourly.time[getCurrentHour() + 6]
-						)}
-						minTemp={`${weatherData.hourly.temperature_2m[6].toFixed(0)}°`}
-						weatherCode={weatherData.hourly.weather_code[6]}
-					/>
-					<HourlyWeatherCard
-						timeLabel={formatHourOfDay(
-							weatherData.hourly.time[getCurrentHour() + 7]
-						)}
-						minTemp={`${weatherData.hourly.temperature_2m[7].toFixed(0)}°`}
-						weatherCode={weatherData.hourly.weather_code[7]}
-					/>
+					{Array.from({ length: numberOfHours }, (_, index) => index).map(
+						(_, index) => {
+							return (
+								<HourlyWeatherCard
+									key={`${currentDayOfTheWeek}-${formatHourOfDay(
+										weatherData.hourly.time[hourOffsetFromToday + index]
+									)}`}
+									timeLabel={formatHourOfDay(
+										weatherData.hourly.time[hourOffsetFromToday + index]
+									)}
+									minTemp={`${weatherData.hourly.temperature_2m[hourOffsetFromToday + index].toFixed(0)}°`}
+									weatherCode={
+										weatherData.hourly.weather_code[hourOffsetFromToday + index]
+									}
+								/>
+							);
+						}
+					)}
 				</ul>
 			</section>
 		</div>
@@ -339,9 +327,18 @@ function DailyWeatherCard({
 	);
 }
 
-function SelectDay() {
+function SelectDay({
+	currentDayOfTheWeek,
+	setSelectedDay,
+}: {
+	currentDayOfTheWeek: FullDayLabelTypes;
+	setSelectedDay: React.Dispatch<React.SetStateAction<FullDayLabelTypes>>;
+}) {
 	return (
-		<Select.Root>
+		<Select.Root
+			defaultValue={currentDayOfTheWeek}
+			onValueChange={(value: FullDayLabelTypes) => setSelectedDay(value)}
+		>
 			<Select.Trigger
 				className="focus-visible:outline-neutral-0 inline-flex cursor-pointer items-center justify-center gap-3 rounded-lg bg-neutral-600 px-4 py-2 hover:bg-neutral-500 focus-visible:outline-3 focus-visible:outline-offset-3"
 				aria-label="Select day"
@@ -359,13 +356,13 @@ function SelectDay() {
 					className="w-53.5 overflow-hidden rounded-xl border border-neutral-600 bg-neutral-800 drop-shadow-[0_8px_16px_rgba(241,96,9,0.32)]"
 				>
 					<Select.Viewport className="grid gap-1 p-2">
-						<SelectItem value="monday" text="Monday" />
-						<SelectItem value="tuesday" text="Tuesday" />
-						<SelectItem value="wednesday" text="Wednesday" />
-						<SelectItem value="thursday" text="Thursday" />
-						<SelectItem value="friday" text="Friday" />
-						<SelectItem value="saturday" text="Saturday" />
-						<SelectItem value="sunday" text="Sunday" />
+						<SelectItem value="Monday" text="Monday" />
+						<SelectItem value="Tuesday" text="Tuesday" />
+						<SelectItem value="Wednesday" text="Wednesday" />
+						<SelectItem value="Thursday" text="Thursday" />
+						<SelectItem value="Friday" text="Friday" />
+						<SelectItem value="Saturday" text="Saturday" />
+						<SelectItem value="Sunday" text="Sunday" />
 					</Select.Viewport>
 				</Select.Content>
 			</Select.Portal>
@@ -374,7 +371,7 @@ function SelectDay() {
 }
 
 interface SelectItemProps {
-	value: string;
+	value: FullDayLabelTypes;
 	text: string;
 }
 
