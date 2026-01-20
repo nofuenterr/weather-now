@@ -20,7 +20,7 @@ export const currentDayOfTheWeek: FullDayLabelTypes = format(
 
 export function getHourOffsetFromToday(selectedDay: FullDayLabelTypes) {
 	const hourStartIndex =
-		selectedDay === currentDayOfTheWeek ? getCurrentHour() : 0;
+		selectedDay === currentDayOfTheWeek ? getCurrentHour() : 9;
 
 	function getNumberOfDaysFromNow() {
 		let counter = 0;
