@@ -34,12 +34,8 @@ export default function MainContent() {
 						How’s the sky looking today?
 					</p>
 
-					<div className="grid auto-rows-[3.5rem] gap-3 md:grid-cols-[1fr_7.125rem] md:gap-4 lg:grid-cols-[minmax(0,32.875rem)_7.125rem] lg:justify-self-center">
+					<div className="grid auto-rows-[3.5rem] lg:grid-cols-[minmax(0,40rem)] lg:justify-self-center">
 						<SearchLocation query={query} setQuery={setQuery} />
-
-						<button className="cursor-pointer rounded-xl bg-blue-500 px-6 py-4 hover:bg-blue-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-blue-500">
-							Search
-						</button>
 					</div>
 
 					{isLoading ? (
