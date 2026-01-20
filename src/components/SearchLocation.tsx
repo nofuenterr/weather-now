@@ -1,4 +1,10 @@
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import {
+	useState,
+	useRef,
+	useEffect,
+	type Dispatch,
+	type SetStateAction,
+} from 'react';
 import { useQuery } from '@tanstack/react-query';
 import loadingIcon from '../assets/icons/icon-loading.svg';
 import searchIcon from '../assets/icons/icon-search.svg';
@@ -26,6 +32,38 @@ export default function SearchLocation({
 	const [locationValue, setLocationValue] = useState<string>('');
 	const [locationsDisplay, setLocationsDisplay] = useState<boolean>(false);
 
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const inputRef = useRef<HTMLInputElement | null>(null);
+
+	useEffect(() => {
+		function handleClickOutside(e: MouseEvent) {
+			if (
+				containerRef.current &&
+				!containerRef.current.contains(e.target as Node)
+			) {
+				setLocationsDisplay(false);
+			}
+		}
+
+		function handleClickInput(e: MouseEvent) {
+			if (
+				inputRef.current &&
+				inputRef.current.contains(e.target as Node) &&
+				locationValue
+			) {
+				setLocationsDisplay(true);
+			}
+		}
+
+		document.addEventListener('click', handleClickOutside);
+		document.addEventListener('click', handleClickInput);
+
+		return () => {
+			document.removeEventListener('click', handleClickOutside);
+			document.removeEventListener('click', handleClickInput);
+		};
+	}, [locationValue]);
+
 	const { data, isLoading, error } = useQuery({
 		queryKey: ['location', locationValue],
 		queryFn: ({ queryKey }) => {
@@ -39,18 +77,19 @@ export default function SearchLocation({
 	const locations = formatLocations();
 
 	return (
-		<div className="relative w-full">
+		<div ref={containerRef} className="relative w-full">
 			<div className="pointer-events-none absolute top-4 left-6">
 				<img src={searchIcon} alt="Search icon" />
 			</div>
 			<input
+				ref={inputRef}
 				className="w-full rounded-xl bg-neutral-800 py-4 pr-6 pl-15 hover:bg-neutral-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-neutral-200"
 				type="search"
 				placeholder="Search for a place..."
 				value={locationValue}
 				onChange={(e) => {
 					setLocationValue(e.target.value);
-					if (!locationsDisplay && e.target.value) setLocationsDisplay(true);
+					setLocationsDisplay(Boolean(e.target.value));
 				}}
 			/>
 
