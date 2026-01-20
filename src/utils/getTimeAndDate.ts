@@ -28,7 +28,7 @@ export function getHourOffsetFromToday(selectedDay: FullDayLabelTypes) {
 		while (selectedDay !== fullDayLabelList[currentIndex]) {
 			counter += 1;
 			currentIndex += 1;
-			if (currentIndex > fullDayLabelList.length) currentIndex = 0;
+			if (currentIndex + 1 > fullDayLabelList.length) currentIndex = 0;
 		}
 		return counter;
 	}
